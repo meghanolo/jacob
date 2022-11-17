@@ -1,0 +1,41 @@
+type Todo @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  description: String
+  isComplete: Boolean
+}
+
+type StarFactOpinion @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  UserKey: ID! @index(name: "byStarDimUser")
+  PostKey: ID! @index(name: "byStarDimPost")
+  VoteKey: ID! @index(name: "byStarDimVote")
+  Post_exp_date: AWSDateTime
+}
+
+type StarDimVote @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Vote_choice: Int
+  Vote_choice_remove: Int
+  Vote_last_applied: AWSDateTime
+  StarFactOpinion: [StarFactOpinion]
+    @hasMany(indexName: "byStarDimVote", fields: ["id"])
+}
+
+type StarDimUser @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  User_age: AWSDate
+  User_gender: String
+  User_institution: String
+  StarFactOpinion: [StarFactOpinion]
+    @hasMany(indexName: "byStarDimUser", fields: ["id"])
+}
+
+type StarDimPost @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Post_text: String
+  Post_posting_date: AWSDateTime
+  Post_connotation_header: String
+  StarFactOpinion: [StarFactOpinion]
+    @hasMany(indexName: "byStarDimPost", fields: ["id"])
+}
